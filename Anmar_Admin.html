@@ -90,6 +90,12 @@ td input.wide{width:130px}
     <button onclick="lock()">Lock</button>
   </div>
 </div>
+<div class="cloudbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#0e1a2e;padding:10px 14px">
+  <input id="cloudUrl" placeholder="Paste your Google Sheet Web-App URL to sync to cloud" style="flex:1;min-width:180px;padding:9px 10px;border:1px solid #34527d;border-radius:8px;background:#16294a;color:#eaf1f8;font-family:'Jost';font-size:13px">
+  <button onclick="connectCloud()" style="background:#B0863A;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-family:'Jost';font-size:12.5px">Connect</button>
+  <button onclick="loadRemote(true)" style="background:transparent;border:1px solid #34527d;color:#cdd7e4;padding:8px 12px;border-radius:8px;cursor:pointer;font-family:'Jost';font-size:12.5px">Sync now</button>
+  <span id="cloudStatus" style="font-size:12px;color:#c9d6e4;margin-left:auto">not connected — using this device</span>
+</div>
 <div class="tabs">
   <div class="tab on" data-v="dash" onclick="tab('dash')">Dashboard</div>
   <div class="tab" data-v="inv" onclick="tab('inv')">Inventory</div>
@@ -181,7 +187,22 @@ function seed(){
   db.sales=[]; save();
 }
 function load(){ try{const d=JSON.parse(localStorage.getItem(KEY)); if(d&&d.products){db=d;} else seed();}catch(e){seed();} }
-function save(){ try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){} }
+function save(noPush){ try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){} if(!noPush && typeof CLOUD!=='undefined' && CLOUD.url) schedulePush(); }
+
+/* ===== cloud sync (Google Sheet · key=admin) ===== */
+const CKEY_A="anmar_admin_cloud"; let CLOUD={url:""};
+try{const c=JSON.parse(localStorage.getItem(CKEY_A));if(c&&c.url)CLOUD.url=c.url;}catch(e){}
+function saveCloudCfg(){try{localStorage.setItem(CKEY_A,JSON.stringify({url:CLOUD.url}));}catch(e){}}
+function setStatus(t,ok){const el=document.getElementById("cloudStatus");if(el){el.textContent=t;el.style.color=ok?"#8fe0a0":"#f2a8a8";}}
+function connectCloud(){CLOUD.url=document.getElementById("cloudUrl").value.trim();saveCloudCfg();if(CLOUD.url)loadRemote(true);else setStatus("not connected — using this device",false);}
+function refreshAll(){renderInv();fillSelects();renderSales();renderDash();}
+function applyRemote(data){if(data&&data.products){db=data;if(!db.sales)db.sales=[];save(true);refreshAll();setStatus("connected \u2713 loaded from cloud",true);}else{setStatus("connected \u2713 \u2014 saving your data to the sheet",true);pushRemote();}}
+function loadRemote(){if(!CLOUD.url){setStatus("paste your Sheet URL first",false);return;}setStatus("syncing\u2026",true);fetch(CLOUD.url+(CLOUD.url.indexOf("?")>-1?"&":"?")+"key=admin&t="+Date.now(),{redirect:"follow"}).then(function(r){return r.text();}).then(function(txt){var data={};try{data=JSON.parse(txt);}catch(e){var m=txt&&txt.match(/\{[\s\S]*\}/);if(m){try{data=JSON.parse(m[0]);}catch(e2){}}}applyRemote(data);}).catch(function(){jsonpLoad();});}
+function jsonpLoad(){const cb="__anmarA"+Date.now();let done=false;const sc=document.createElement("script");function cleanup(){try{delete window[cb];}catch(e){}if(sc&&sc.parentNode)sc.remove();}const to=setTimeout(function(){if(!done){setStatus("cannot reach sheet \u2014 update the code & redeploy New version",false);cleanup();}},12000);window[cb]=function(data){done=true;clearTimeout(to);applyRemote(data);cleanup();};sc.onerror=function(){};sc.src=CLOUD.url+(CLOUD.url.indexOf("?")>-1?"&":"?")+"key=admin&callback="+cb+"&t="+Date.now();document.body.appendChild(sc);}
+let __pushT=null;function schedulePush(){if(!CLOUD.url)return;clearTimeout(__pushT);__pushT=setTimeout(pushRemote,900);}
+function pushRemote(){if(!CLOUD.url)return;setStatus("saving\u2026",true);fetch(CLOUD.url+"?key=admin",{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(db)}).then(function(){setStatus("saved to cloud \u2713",true);}).catch(function(){setStatus("save failed (offline?)",false);});}
+function initCloud(){var i=document.getElementById("cloudUrl");if(i)i.value=CLOUD.url;if(CLOUD.url)loadRemote(true);}
+
 const money=n=>"₹"+Math.round(n).toLocaleString('en-IN');
 
 /* ===== gate ===== */
@@ -298,7 +319,7 @@ function exportSalesCSV(){
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download="anmar-sales.csv"; a.click();
 }
 
-function boot(){ load(); renderInv(); fillSelects(); renderSales(); renderDash(); }
+function boot(){ load(); renderInv(); fillSelects(); renderSales(); renderDash(); initCloud(); }
 load();
 </script>
 </body>
