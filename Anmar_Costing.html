@@ -72,6 +72,15 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 </style>
 </head>
 <body>
+<div id="gate" style="position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#12233F,#284b80);display:flex;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:16px;padding:32px 26px;max-width:320px;width:100%;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.3)">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:34px;letter-spacing:4px;color:#12233F">ANMAR</div>
+    <div style="font-size:13px;color:#8a8a8a;margin:4px 0 18px">Costing &amp; Sales — enter passcode</div>
+    <input id="pc" type="password" inputmode="numeric" placeholder="passcode" onkeydown="if(event.key==='Enter')unlock()" style="width:100%;padding:12px;border:1px solid #E6E1D4;border-radius:10px;font-family:'Jost';font-size:16px;text-align:center;letter-spacing:2px">
+    <button onclick="unlock()" style="width:100%;margin-top:12px;background:#12233F;color:#fff;border:none;padding:12px;border-radius:10px;font-family:'Jost';font-size:15px;cursor:pointer">Unlock</button>
+    <div id="gerr" style="color:#C0392B;font-size:12.5px;margin-top:10px;min-height:16px"></div>
+  </div>
+</div>
 <div class="top"><span class="b">ANMAR</span> &nbsp;<span class="t">COSTING &amp; SALES</span></div>
 <div class="maintabs">
   <div class="mtab on" id="mt-cost" onclick="mtab('cost')">Costing</div>
@@ -191,6 +200,9 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 </div></div>
 
 <script>
+const PASSCODE="anmar123";
+function unlock(){var v=document.getElementById('pc').value;if(v===PASSCODE){document.getElementById('gate').style.display='none';}else{document.getElementById('gerr').textContent='Wrong passcode';document.getElementById('pc').value='';document.getElementById('pc').focus();}}
+
 const KEY="anmar_costing_v2";
 const SEED_ATTARS=["Musk Maria","Hawas Special","Attraction","Misk Rijali","Ashrafi Oud","Laviza for Women","White Oud","Noor-e-Mehek","Pasha the Royalty","Turkish Oud","Signature Blue"];
 let db={
@@ -208,10 +220,10 @@ function setStatus(t,ok){const el=document.getElementById("cloudStatus");if(el){
 function connectCloud(){CLOUD.url=document.getElementById("cloudUrl").value.trim();saveCloudCfg();if(CLOUD.url){loadRemote(true);}else setStatus("not connected — using this device",false);}
 function refreshAll(){document.getElementById("b3").value=db.bottle[3];document.getElementById("b6").value=db.bottle[6];document.getElementById("b12").value=db.bottle[12];document.getElementById("pkPrem").value=db.packing.prem;document.getElementById("pkReg").value=db.packing.reg;document.getElementById("deliv").value=db.deliv;document.getElementById("selMargin").value=db.margin;document.getElementById("selBasis").value=db.basis;document.getElementById("selMode").value=db.mode;setTab(db.tab);renderSel();fillSaleSel();render();renderSales();}
 function applyRemote(data){if(data&&data.attar){db=Object.assign(db,data);if(!db.sales)db.sales=[];try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}refreshAll();setStatus("connected ✓ loaded from cloud",true);}else{setStatus("connected ✓ - saving your data to the sheet",true);pushRemote();}}
-function loadRemote(){if(!CLOUD.url){setStatus("paste your Sheet URL first",false);return;}setStatus("syncing...",true);fetch(CLOUD.url+(CLOUD.url.indexOf("?")>-1?"&":"?")+"t="+Date.now(),{redirect:"follow"}).then(function(r){return r.text();}).then(function(txt){var data={};try{data=JSON.parse(txt);}catch(e){var m=txt&&txt.match(/\{[\s\S]*\}/);if(m){try{data=JSON.parse(m[0]);}catch(e2){}}}applyRemote(data);}).catch(function(){jsonpLoad();});}
-function jsonpLoad(){const cb="__anmarCb"+Date.now();let done=false;const sc=document.createElement("script");function cleanup(){try{delete window[cb];}catch(e){}if(sc&&sc.parentNode)sc.remove();}const to=setTimeout(function(){if(!done){setStatus("cannot reach sheet - in Deploy set access to Anyone, then redeploy New version",false);cleanup();}},12000);window[cb]=function(data){done=true;clearTimeout(to);applyRemote(data);cleanup();};sc.onerror=function(){};sc.src=CLOUD.url+(CLOUD.url.indexOf("?")>-1?"&":"?")+"callback="+cb+"&t="+Date.now();document.body.appendChild(sc);}
+function loadRemote(){if(!CLOUD.url){setStatus("paste your Sheet URL first",false);return;}setStatus("syncing...",true);fetch(CLOUD.url+(CLOUD.url.indexOf("?")>-1?"&":"?")+"key=costing&t="+Date.now(),{redirect:"follow"}).then(function(r){return r.text();}).then(function(txt){var data={};try{data=JSON.parse(txt);}catch(e){var m=txt&&txt.match(/\{[\s\S]*\}/);if(m){try{data=JSON.parse(m[0]);}catch(e2){}}}applyRemote(data);}).catch(function(){jsonpLoad();});}
+function jsonpLoad(){const cb="__anmarCb"+Date.now();let done=false;const sc=document.createElement("script");function cleanup(){try{delete window[cb];}catch(e){}if(sc&&sc.parentNode)sc.remove();}const to=setTimeout(function(){if(!done){setStatus("cannot reach sheet - in Deploy set access to Anyone, then redeploy New version",false);cleanup();}},12000);window[cb]=function(data){done=true;clearTimeout(to);applyRemote(data);cleanup();};sc.onerror=function(){};sc.src=CLOUD.url+(CLOUD.url.indexOf("?")>-1?"&":"?")+"key=costing&callback="+cb+"&t="+Date.now();document.body.appendChild(sc);}
 let __pushT=null;function schedulePush(){if(!CLOUD.url)return;clearTimeout(__pushT);__pushT=setTimeout(pushRemote,900);}
-function pushRemote(){if(!CLOUD.url)return;setStatus("saving…",true);fetch(CLOUD.url,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(db)}).then(function(){setStatus("saved to cloud ✓",true);}).catch(function(){setStatus("save failed (offline?)",false);});}
+function pushRemote(){if(!CLOUD.url)return;setStatus("saving…",true);fetch(CLOUD.url+"?key=costing",{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(db)}).then(function(){setStatus("saved to cloud ✓",true);}).catch(function(){setStatus("save failed (offline?)",false);});}
 function backup(){const b=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="anmar-costing-"+new Date().toISOString().slice(0,10)+".json";a.click();}
 function restore(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(){try{const d=JSON.parse(r.result);if(d.attar){db=Object.assign(db,d);if(!db.sales)db.sales=[];try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}refreshAll();schedulePush();alert("Restored ✓");}}catch(e){alert("Invalid file");}};r.readAsText(f);}
 function num(id){return parseFloat(document.getElementById(id).value)||0;}
@@ -380,6 +392,7 @@ document.getElementById('view-sales').addEventListener('input',function(e){
 });
 document.getElementById('cloudUrl').value=CLOUD.url;
 if(CLOUD.url){loadRemote(true);}
+var _pc=document.getElementById('pc');if(_pc)_pc.focus();
 </script>
 </body>
 </html>
