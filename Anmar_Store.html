@@ -179,14 +179,15 @@ footer a:hover{color:var(--goldl)}
     <h1 class="goldtxt">Imported feel. Desi deal.</h1>
     <div class="sub">Premium alcohol-free fragrances</div>
     <div class="cta">
-      <a href="#" onclick="setTop('Attars');document.getElementById('shop').scrollIntoView({behavior:'smooth'});return false" class="btn">Shop by Collection</a>
+      <a href="#" onclick="shopPremium();return false" style="display:inline-block;padding:11px 28px;border:1.5px solid #C9A227;border-radius:28px;background:rgba(0,0,0,.18);cursor:pointer;text-decoration:none"><span class="goldtxt" style="font-family:'Playfair Display',serif;font-style:italic;font-size:18px;font-weight:600">Fragrances change perspectives — Get Yours</span></a>
     </div>
   </div>
 </section>
 
 <section style="background:linear-gradient(135deg,#4E2434,#6E3648);color:#FCF2EF;text-align:center;padding:9px 20px">
   <div class="wrap">
-    <div style="font-family:'Playfair Display',serif;font-size:16px;letter-spacing:1.5px;color:#E9C2BC">✨ Premium Perfumes Coming Soon — <span style="font-size:12px;opacity:.9">non-alcoholic sprays · follow <b>@anmar.perfumes</b></span> ✨</div>
+    <div style="font-family:'Playfair Display',serif;font-size:15px;letter-spacing:1px;color:#E9C2BC">✨ Premium Perfumes Coming Soon ✨</div>
+    <div style="font-size:12px;opacity:.9;margin-top:2px">non-alcoholic sprays · follow <b>@anmar.perfumes</b></div>
   </div>
 </section>
 
@@ -418,11 +419,16 @@ const offers = ["🎁 Giveaway is LIVE — follow @anmar.perfumes for a chance t
 document.getElementById('track').innerHTML = (offers.map(o=>`<span>${o}</span>`).join('')).repeat(2);
 document.getElementById('yr').textContent = new Date().getFullYear();
 var topCat="Attars";
+function shopPremium(){setTop('Attars');var e=document.getElementById('premium');if(e)setTimeout(function(){e.scrollIntoView({behavior:'smooth'});},130);}
 function setTop(t){topCat=t;
-  document.getElementById('tabAttars').classList.toggle('ton',t==='Attars');
-  document.getElementById('tabPerfumes').classList.toggle('ton',t==='Perfumes');
-  document.getElementById('shopArea').style.display=(t==='Attars')?'':'none';
-  document.getElementById('perfumeSoon').style.display=(t==='Perfumes')?'':'none';
+  var a=document.getElementById('tabAttars'),pf=document.getElementById('tabPerfumes');
+  if(a)a.classList.toggle('ton',t==='Attars');
+  if(pf)pf.classList.toggle('ton',t==='Perfumes');
+  var sa=document.getElementById('shopArea'),ps=document.getElementById('perfumeSoon');
+  if(sa)sa.style.display=(t==='Attars')?'':'none';
+  if(ps)ps.style.display=(t==='Perfumes')?'':'none';
+  var target=document.getElementById(t==='Attars'?'shop':'perfumeSoon');
+  if(target)setTimeout(function(){target.scrollIntoView({behavior:'smooth'});},60);
 }
 var CURDEAL=null;
 var DEALS={};try{DEALS=JSON.parse(localStorage.getItem('anmar_deals')||'{}');}catch(e){DEALS={};}
