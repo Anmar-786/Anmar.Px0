@@ -33,9 +33,9 @@ header{position:sticky;top:0;z-index:50;background:var(--navy);color:var(--cream
 .brand .tg{font-family:'Playfair Display',serif;font-size:14px;letter-spacing:1.2px;color:#FCF2EF;font-style:italic}
 .nav{margin-left:auto;display:flex;gap:22px;align-items:center;font-size:14px;letter-spacing:.5px}
 .nav a{color:var(--cream2);opacity:.9}.nav a:hover{color:var(--goldl)}
-.cartbtn{background:var(--cream2);color:var(--navy);border:none;padding:9px 16px;border-radius:22px;font-family:'Montserrat';font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px}
-.cartbtn:hover{background:#fff}
-.cartbtn .cnt{background:var(--navy);color:var(--cream2);border-radius:12px;padding:0 7px;font-size:12px;font-weight:600}
+.cartbtn{background:linear-gradient(135deg,#F0DA97,#F9EFC4,#EAD08A);color:#5B2A3C;border:none;padding:9px 16px;border-radius:22px;font-family:'Montserrat';font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 2px 8px rgba(224,200,120,.4)}
+.cartbtn:hover{filter:brightness(1.06)}
+.cartbtn .cnt{background:#4E2434;color:#F6E9A8;border-radius:12px;padding:0 7px;font-size:12px;font-weight:600}
 /* hero */
 .hero{background:linear-gradient(135deg,#4E2434,#6E3648);color:var(--cream2);padding:22px 0;text-align:center;position:relative;overflow:hidden}
 .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% -20%,rgba(231,173,166,.30),transparent 60%)}
@@ -151,13 +151,19 @@ footer a:hover{color:var(--goldl)}
     <nav class="nav">
       <a href="#shop">Shop</a>
       <a href="#premium">Premium</a>
-      <a href="#shopcat">Shop</a>
+      
       <a href="#contact">Contact</a>
       <button class="cartbtn" onclick="openCart()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Bag <span class="cnt" id="cnt">0</span></button>
     </nav>
   </div>
 </header>
 
+<div style="position:relative;height:20px;overflow:hidden">
+  <span class="spk" style="left:20%;top:5px;color:#C9A227;animation-delay:.2s">✦</span>
+  <span class="spk" style="left:40%;top:9px;color:#B76E79;animation-delay:.7s">✧</span>
+  <span class="spk" style="left:58%;top:4px;color:#C9A227;animation-delay:1.2s">✦</span>
+  <span class="spk" style="left:78%;top:8px;color:#B76E79;animation-delay:.4s">✧</span>
+</div>
 <section class="hero" id="top">
   <div class="wrap">
     <div class="herologo">
@@ -196,7 +202,7 @@ footer a:hover{color:var(--goldl)}
   <div class="wrap">
     <div style="font-size:11px;letter-spacing:3px;color:var(--goldl)">ANMAR · DEAL OF THE DAY</div>
     <div style="font-family:'Playfair Display',serif;font-size:25px;color:#fff;margin-top:4px;line-height:1.25"><span id="dealText">Buy Misk Rijali 6ml &amp; get any 3ml attar FREE</span> — <span id="dealPrice" class="goldtxt" style="font-weight:700">₹300</span></div>
-    <a href="#" onclick="openCart();return false" class="btn" style="margin-top:10px;padding:8px 20px;font-size:13px">Grab yours now</a>
+    <a href="#" onclick="grabDeal();return false" class="btn" style="margin-top:10px;padding:8px 20px;font-size:13px">Grab yours now</a>
   </div>
 </section>
 
@@ -307,6 +313,18 @@ footer a:hover{color:var(--goldl)}
         <div style="display:flex;gap:16px;flex-wrap:wrap"><label style="display:flex;align-items:center;gap:8px;font-size:14px"><input type="checkbox" id="opPrem"> Premium &#10022;</label><label style="display:flex;align-items:center;gap:8px;font-size:14px"><input type="checkbox" id="opHot"> Best Seller &#9733;</label></div>
         <button onclick="addCustom()" class="add" style="width:100%">+ Add fragrance to store</button>
       </div>
+      <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:14px">
+        <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin-bottom:8px">Add photos to an existing fragrance</div>
+        <select id="opExist" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-family:'Montserrat';font-size:14px"></select>
+        <div style="font-size:12px;color:#777;margin:8px 0 4px">Upload 3 photos (all required)</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input type="file" accept="image/*" id="opPh1" onchange="onExistPhoto(event,1)" style="font-size:11px;flex:1;min-width:90px">
+          <input type="file" accept="image/*" id="opPh2" onchange="onExistPhoto(event,2)" style="font-size:11px;flex:1;min-width:90px">
+          <input type="file" accept="image/*" id="opPh3" onchange="onExistPhoto(event,3)" style="font-size:11px;flex:1;min-width:90px">
+        </div>
+        <div id="opPhPrev" style="margin-top:6px"></div>
+        <button onclick="savePhotos()" class="add" style="width:100%;margin-top:8px">Save photos to fragrance</button>
+      </div>
       <div style="margin-top:16px;font-size:13px;color:#777">Your added fragrances</div>
       <div id="opList" style="margin-top:6px"></div>
     </div>
@@ -406,17 +424,22 @@ function setTop(t){topCat=t;
   document.getElementById('shopArea').style.display=(t==='Attars')?'':'none';
   document.getElementById('perfumeSoon').style.display=(t==='Perfumes')?'':'none';
 }
+var CURDEAL=null;
+var DEALS={};try{DEALS=JSON.parse(localStorage.getItem('anmar_deals')||'{}');}catch(e){DEALS={};}
+function saveDeals(){try{localStorage.setItem('anmar_deals',JSON.stringify(DEALS));}catch(e){}}
+function grabDeal(){if(!CURDEAL)return;cart['dealline']=1;DEALS['dealline']={label:CURDEAL.t,price:CURDEAL.price};saveDeals();save();renderCart();openCart();}
 function renderDeal(){var deals=[
-  {t:"Buy Misk Rijali 6ml & get any 3ml attar of your choice FREE",p:"₹300"},
-  {t:"Buy Turkish Oud 6ml & get any 3ml attar of your choice FREE",p:"₹300"},
-  {t:"Buy Ashrafi Oud 6ml & get any 3ml attar of your choice FREE",p:"₹300"},
-  {t:"Buy White Oud 6ml & get any 3ml attar of your choice FREE",p:"₹300"},
-  {t:"Any 2 attars (6ml) — mix & match",p:"₹450"},
-  {t:"Buy any 12ml attar & get a 3ml FREE",p:"Today only"}
+  {name:"Misk Rijali",t:"Misk Rijali 6ml + any 3ml attar FREE",price:300},
+  {name:"Turkish Oud",t:"Turkish Oud 6ml + any 3ml attar FREE",price:300},
+  {name:"Ashrafi Oud",t:"Ashrafi Oud 6ml + any 3ml attar FREE",price:300},
+  {name:"White Oud",t:"White Oud 6ml + any 3ml attar FREE",price:300},
+  {name:"Musk Maria",t:"Musk Maria 6ml + any 3ml attar FREE",price:300},
+  {name:"Signature Blue",t:"Signature Blue 6ml + any 3ml attar FREE",price:300}
  ];
  var d=new Date();var block=Math.floor(d.getHours()/3);var seed=(d.getFullYear()*366+(d.getMonth()*31+d.getDate()))*8+block;var dl=deals[seed%deals.length];
+ CURDEAL=dl;
  var pe=document.getElementById('dealPrice'),te=document.getElementById('dealText');
- if(pe)pe.textContent=dl.p; if(te)te.textContent=dl.t;}
+ if(pe)pe.textContent="₹"+dl.price; if(te)te.textContent=dl.t;}
 
 /* drawn bottle */
 function bottleSVG(name){
@@ -432,7 +455,8 @@ function bottleSVG(name){
    <text x="60" y="132" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="4.6" fill="#B76E79">Imported feel.</text>
   </svg>`;
 }
-function media(p){ return p.img ? `<img src="${p.img}" alt="${p.name}">` : bottleSVG(p.name); }
+function imgsOf(p){if(!p||!p.img)return [];var im=p.img;if(typeof im==='string'){im=im.trim();if(im.charAt(0)==='['){try{return JSON.parse(im);}catch(e){return [p.img];}}return [im];}if(Array.isArray(im))return im;return [];}
+function media(p){var a=imgsOf(p);return a.length?`<img src="${a[0]}" alt="${p.name}">`:bottleSVG(p.name);}
 
 /* state */
 let cart = {};
@@ -447,7 +471,9 @@ function loadPricing(){if(!SHEET_URL)return;var cb="__anmarPr"+Date.now();var sc
 /* ===== owner products (add fragrance + price + photo) ===== */
 function applyCustom(){
   PRODUCTS.length=BASE_COUNT; CUSTOMPRICE={};
+  for(var i=0;i<BASE_COUNT;i++){PRODUCTS[i].img="";}
   customItems.forEach(function(it){
+    if(String(it.id).indexOf('ovr-')===0){var pr=PRODUCTS.find(function(x){return x.name===it.name;});if(pr)pr.img=it.img;return;}
     PRODUCTS.push({id:it.id,name:it.name,gender:"Unisex",cat:it.cat||"Signature",premium:!!it.premium,hot:!!it.hot,img:it.img||"",notes:it.notes||""});
     CUSTOMPRICE[it.name]={3:it.p3,6:it.p6,12:it.p12};
   });
@@ -457,9 +483,15 @@ function loadCustomProducts(){if(!SHEET_URL)return;var cb="__anmarCp"+Date.now()
 function pushCustom(){if(!SHEET_URL){alert('Store not connected to your sheet.');return;}fetch(SHEET_URL+"?key=products",{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({updatedAt:Date.now(),items:customItems})});}
 function compressImg(file,cb){var rd=new FileReader();rd.onload=function(){var img=new Image();img.onload=function(){var max=360,w=img.width,h=img.height,sc=Math.min(1,max/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);var cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);var q=0.7,data=cv.toDataURL('image/jpeg',q);while(data.length>44000&&q>0.3){q-=0.1;data=cv.toDataURL('image/jpeg',q);}cb(data);};img.src=rd.result;};rd.readAsDataURL(file);}
 function onPhoto(e){var fl=e.target.files[0];if(!fl)return;compressImg(fl,function(d){opImgData=d;var pv=document.getElementById('opPreview');if(pv){pv.src=d;pv.style.display='inline-block';}});}
+var ph1='',ph2='',ph3='';
+function compressImgMax(file,max,cb){var rd=new FileReader();rd.onload=function(){var img=new Image();img.onload=function(){var w=img.width,h=img.height,sc=Math.min(1,max/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);var cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);var q=0.6,data=cv.toDataURL('image/jpeg',q);var lim=(max<=240)?15000:44000;while(data.length>lim&&q>0.25){q-=0.08;data=cv.toDataURL('image/jpeg',q);}cb(data);};img.src=rd.result;};rd.readAsDataURL(file);}
+function onExistPhoto(e,n){var fl=e.target.files[0];if(!fl)return;compressImgMax(fl,240,function(d){if(n===1)ph1=d;else if(n===2)ph2=d;else ph3=d;showPhPrev();});}
+function showPhPrev(){var box=document.getElementById('opPhPrev');if(!box)return;box.innerHTML=[ph1,ph2,ph3].filter(Boolean).map(function(u){return '<img src="'+u+'" style="width:46px;height:46px;object-fit:cover;border-radius:6px;margin:3px;border:1px solid var(--line)">';}).join('');}
+function fillExist(){var sel=document.getElementById('opExist');if(!sel)return;var names=[];for(var i=0;i<BASE_COUNT;i++){names.push(PRODUCTS[i].name);}sel.innerHTML=names.map(function(n){return '<option value="'+n+'">'+n+'</option>';}).join('');}
+function savePhotos(){var name=document.getElementById('opExist').value;if(!name){alert('Pick a fragrance.');return;}if(!ph1||!ph2||!ph3){alert('Please add all 3 photos.');return;}var it={id:"ovr-"+name,name:name,override:true,img:JSON.stringify([ph1,ph2,ph3])};customItems=customItems.filter(function(x){return x.id!=="ovr-"+name;});customItems.push(it);pushCustom();applyCustom();renderCustomList();ph1=ph2=ph3='';['opPh1','opPh2','opPh3'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});var pp=document.getElementById('opPhPrev');if(pp)pp.innerHTML='';alert('Photos saved \u2713 for '+name);}
 function openOwner(){document.getElementById('ownerModal').style.display='flex';document.getElementById('opGate').style.display='block';document.getElementById('ownerBody').style.display='none';document.getElementById('opPass').value='';setTimeout(function(){document.getElementById('opPass').focus();},60);}
 function closeOwner(){document.getElementById('ownerModal').style.display='none';}
-function ownerUnlock(){if(document.getElementById('opPass').value==='anmar123'){document.getElementById('opGate').style.display='none';document.getElementById('ownerBody').style.display='block';renderCustomList();}else{alert('Wrong passcode');}}
+function ownerUnlock(){if(document.getElementById('opPass').value==='anmar123'){document.getElementById('opGate').style.display='none';document.getElementById('ownerBody').style.display='block';fillExist();renderCustomList();}else{alert('Wrong passcode');}}
 function addCustom(){
   var name=v('opName'); if(!name){alert('Enter a fragrance name.');return;}
   var p6=parseFloat(v('opP6'))||0; if(p6<=0){alert('Enter the 6 ml price.');return;}
@@ -486,10 +518,13 @@ function cats(){
 function setCat(c){ activeCat=c; cats(); renderGrid(); document.getElementById('shopSub').textContent = c==="All"?"All fragrances":c; document.getElementById('shop').scrollIntoView({behavior:'smooth'}); }
 
 function card(p){
+  var imgs=imgsOf(p);
+  var main = imgs.length?`<img id="main-${p.id}" src="${imgs[0]}" alt="${p.name}">`:bottleSVG(p.name);
+  var gal = imgs.length>1?`<div style="display:flex;gap:6px;justify-content:center;padding:8px 0 0">`+imgs.slice(0,3).map(function(u){return `<img src="${u}" onclick="var m=document.getElementById('main-${p.id}');if(m)m.src=this.src" style="width:34px;height:34px;object-fit:cover;border-radius:6px;border:1px solid var(--line);cursor:pointer">`;}).join('')+`</div>`:'';
   const opts = SIZES.map((s,i)=>`<option value="${i}">${s.ml} — ${money(priceFor(p,i))}</option>`).join('');
   const badge = p.premium?`<div class="badge">✦ PREMIUM</div>`:(p.hot?`<div class="badge hot">BESTSELLER</div>`:'');
   return `<div class="card">
-    <div class="thumb">${badge}${media(p)}</div>
+    <div class="thumb">${badge}${main}</div>${gal}
     <div class="cbody">
       <div class="nm">${p.name}</div>
       <div class="gd">${p.gender} · ${p.cat}</div>
@@ -532,8 +567,8 @@ function addToCart(id){
   cart[key] = (cart[key]||0)+1;
   save(); renderCart(); openCart();
 }
-function changeQty(key,d){ cart[key]=(cart[key]||0)+d; if(cart[key]<=0) delete cart[key]; save(); renderCart(); }
-function removeItem(key){ delete cart[key]; save(); renderCart(); }
+function changeQty(key,d){ cart[key]=(cart[key]||0)+d; if(cart[key]<=0){delete cart[key];if(DEALS[key]){delete DEALS[key];saveDeals();}} save(); renderCart(); }
+function removeItem(key){ delete cart[key]; if(DEALS[key]){delete DEALS[key];saveDeals();} save(); renderCart(); }
 function save(){ try{localStorage.setItem('anmar_cart',JSON.stringify(cart));}catch(e){} document.getElementById('cnt').textContent = Object.values(cart).reduce((a,b)=>a+b,0); }
 
 function renderCart(){
@@ -542,7 +577,13 @@ function renderCart(){
   if(!keys.length){ box.innerHTML = `<div class="empty">Your bag is empty.<br>Add a fragrance to begin ✦</div>`; }
   else{
     box.innerHTML = keys.map(k=>{
-      const [id,i]=k.split('|'); const p=PRODUCTS.find(x=>x.id===id); const s=SIZES[i]; const q=cart[k];
+      const q=cart[k];
+      if(DEALS[k]){const dm=DEALS[k];
+        return `<div class="ci"><div class="tn" style="font-size:24px">🎁</div>
+          <div class="info"><div class="n">Deal of the Day</div><div class="m">${dm.label} · ${money(dm.price)}</div>
+          <div class="qty"><button onclick="changeQty('${k}',-1)">−</button><span>${q}</span><button onclick="changeQty('${k}',1)">+</button></div></div>
+          <div class="pr">${money(dm.price*q)}</div></div>`;}
+      const [id,i]=k.split('|'); const p=PRODUCTS.find(x=>x.id===id); const s=SIZES[i];
       return `<div class="ci">
         <div class="tn">${media(p)}</div>
         <div class="info"><div class="n">${p.name}</div><div class="m">${s.ml} · ${money(priceFor(p,i))}</div>
@@ -552,7 +593,7 @@ function renderCart(){
       </div>`;
     }).join('');
   }
-  let sub=0; keys.forEach(k=>{const[id,i]=k.split('|');const p=PRODUCTS.find(x=>x.id===id);sub+=priceFor(p,i)*cart[k];});
+  let sub=cartSubtotal();
   document.getElementById('sub').textContent=money(sub);
   document.getElementById('tot').textContent=money(sub);
   save();
@@ -561,7 +602,7 @@ function openCart(){document.getElementById('drawer').classList.add('on');docume
 function closeCart(){document.getElementById('drawer').classList.remove('on');document.getElementById('overlay').classList.remove('on');}
 
 function v(id){var e=document.getElementById(id);return e?e.value.trim():'';}
-function cartSubtotal(){var t=0;Object.keys(cart).forEach(function(k){var a=k.split('|');var p=PRODUCTS.find(function(x){return x.id===a[0];});t+=priceFor(p,a[1])*cart[k];});return t;}
+function cartSubtotal(){var t=0;Object.keys(cart).forEach(function(k){if(DEALS[k]){t+=DEALS[k].price*cart[k];return;}var a=k.split('|');var p=PRODUCTS.find(function(x){return x.id===a[0];});t+=priceFor(p,a[1])*cart[k];});return t;}
 function proceedCheckout(){if(!Object.keys(cart).length){alert('Your bag is empty.');return;}document.getElementById('bagFoot').style.display='none';document.getElementById('payFoot').style.display='block';updatePay();}
 function backToBag(){document.getElementById('payFoot').style.display='none';document.getElementById('bagFoot').style.display='block';}
 function payMode(){var r=document.querySelector('input[name=pay]:checked');return r?r.value:'online';}
@@ -587,12 +628,12 @@ function placeOrder(){var sub=cartSubtotal();if(sub<=0){alert('Your bag is empty
   if(!/^\d{6}$/.test(pin)){alert('Enter a valid 6-digit PIN code.');return;}
   var fee=(mode==='cod'&&sub<750)?50:0,grand=sub+fee,keys=Object.keys(cart);
   var msg="Hello Anmar Perfumes! %F0%9F%A4%8D%0ANew order:%0A%0A";
-  keys.forEach(function(k){var a=k.split('|');var p=PRODUCTS.find(function(x){return x.id===a[0];});var s=SIZES[a[1]];msg+="\u2022 "+p.name+" ("+s.ml+") x"+cart[k]+" — \u20b9"+(priceFor(p,a[1])*cart[k])+"%0A";});
+  keys.forEach(function(k){if(DEALS[k]){var dm=DEALS[k];msg+="\u2022 "+dm.label+" x"+cart[k]+" — \u20b9"+(dm.price*cart[k])+"%0A";return;}var a=k.split('|');var p=PRODUCTS.find(function(x){return x.id===a[0];});var s=SIZES[a[1]];msg+="\u2022 "+p.name+" ("+s.ml+") x"+cart[k]+" — \u20b9"+(priceFor(p,a[1])*cart[k])+"%0A";});
   msg+="%0ASubtotal: \u20b9"+sub+"%0A";
   if(fee)msg+="COD fee: \u20b9"+fee+"%0A";
   msg+="Payment: "+(mode==='online'?('Online (UPI '+UPI+')'):'Cash on Delivery')+"%0ATotal: \u20b9"+grand+"%0A%0A";
   msg+="Name: "+encodeURIComponent(name)+"%0APhone: "+phone+"%0AAddress: "+encodeURIComponent(addr)+"%0APIN: "+pin+"%0A";
-  if(SHEET_URL){try{var order={id:"o"+Date.now(),date:new Date().toISOString().slice(0,10),name:name,phone:phone,address:addr,pin:pin,payment:mode,fee:fee,items:keys.map(function(k){var a=k.split('|');var p=PRODUCTS.find(function(x){return x.id===a[0];});var sz=SIZES[a[1]];return{name:p.name,ml:sz.ml,qty:cart[k],price:priceFor(p,a[1])};}),total:grand,status:"New (WhatsApp)",source:"online"};fetch(SHEET_URL+"?key=store&mode=append",{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)});}catch(e){}}
+  if(SHEET_URL){try{var order={id:"o"+Date.now(),date:new Date().toISOString().slice(0,10),name:name,phone:phone,address:addr,pin:pin,payment:mode,fee:fee,items:keys.map(function(k){if(DEALS[k]){return{name:DEALS[k].label,ml:"deal",qty:cart[k],price:DEALS[k].price};}var a=k.split('|');var p=PRODUCTS.find(function(x){return x.id===a[0];});var sz=SIZES[a[1]];return{name:p.name,ml:sz.ml,qty:cart[k],price:priceFor(p,a[1])};}),total:grand,status:"New (WhatsApp)",source:"online"};fetch(SHEET_URL+"?key=store&mode=append",{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)});}catch(e){}}
   window.open("https://wa.me/"+WHATSAPP+"?text="+msg,'_blank');
   cart={};save();renderCart();backToBag();
   alert('Thank you! Please press Send in WhatsApp to confirm your order.');}
