@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#12233F">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<title>Anmar · Costing & Sales</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#12233F;--mid:#3A5578;--gold:#B0863A;--goldl:#D9B45B;--cream:#FBF6EA;--line:#E6E1D4;--ok:#2E7D32;--warn:#C9852B;--bad:#C0392B;--bg:#F4F6F9}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:#1c1c1c;-webkit-text-size-adjust:100%}
+.top{background:var(--navy);color:var(--cream);padding:14px 18px;position:sticky;top:0;z-index:20}
+.top .b{font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:3px;color:var(--goldl)}
+.top .t{font-size:11.5px;color:#b9c6d8;letter-spacing:1px}
+.maintabs{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);padding:0 14px;position:sticky;top:52px;z-index:19}
+.mtab{padding:14px 20px;cursor:pointer;font-size:15px;color:#777;border-bottom:2px solid transparent}
+.mtab.on{color:var(--navy);border-color:var(--gold);font-weight:600}
+.view{display:none}.view.on{display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:16px 14px 80px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+.card h2{font-family:'Cormorant Garamond',serif;color:var(--navy);font-size:22px}
+.card .cs{font-size:12.5px;color:#8a8a8a;margin:2px 0 12px}
+.grid{display:grid;gap:12px}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:11px;color:#8a8a8a;letter-spacing:.3px}
+.fld input,.fld select{padding:11px 10px;border:1px solid var(--line);border-radius:9px;font-family:'Jost';font-size:15px;background:#fff;width:100%}
+.fld input:focus,.fld select:focus{outline:2px solid var(--goldl);border-color:transparent}
+.seg{display:flex;background:#eef1f5;border-radius:10px;padding:3px;margin-bottom:12px}
+.seg button{flex:1;border:none;background:none;padding:10px;border-radius:8px;font-family:'Jost';font-size:14px;color:#777;cursor:pointer}
+.seg button.on{background:#fff;color:var(--navy);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+th{text-align:right;color:#8a8a8a;font-weight:500;font-size:11.5px;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:9px 8px;border-bottom:1px solid #f0ede4;text-align:right;white-space:nowrap}
+td input{width:88px;padding:8px;border:1px solid var(--line);border-radius:7px;font-size:14px;font-family:'Jost';text-align:right}
+td.pill{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--navy)}
+.rm{background:none;border:none;color:var(--bad);cursor:pointer;font-size:12px}
+.addrow{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.addrow input{flex:1;min-width:120px;padding:11px;border:1px solid var(--line);border-radius:9px;font-size:15px;font-family:'Jost'}
+.btn{background:var(--navy);color:#fff;border:none;padding:11px 16px;border-radius:9px;cursor:pointer;font-family:'Jost';font-size:14px}
+.btn:hover{background:var(--gold)}.btn.g{background:var(--gold)}.btn.sm{padding:8px 12px;font-size:13px}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--navy)}
+.result{background:linear-gradient(135deg,#12233F,#284b80);color:#fff;border-radius:13px;padding:18px;margin-top:14px}
+.result .top2{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+.result .ttl{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--goldl)}
+.result .big{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:700;color:#fff;line-height:1}
+.result .per{font-size:13px;color:#c9d6e8}
+.bd{margin-top:12px;border-top:1px solid rgba(255,255,255,.2);padding-top:10px}
+.bd .r{display:flex;justify-content:space-between;font-size:13.5px;color:#dfe6f0;padding:3px 0}
+.matrix td.hl{background:#faf7ef}
+.hint{font-size:12px;color:#999;margin-top:10px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px}
+.kpi.gold{background:linear-gradient(135deg,#12233F,#284b80);color:#fff}
+.kpi .l{font-size:11.5px;color:#8a8a8a}.kpi.gold .l{color:#c9d6e8}
+.kpi .v{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--navy);margin-top:2px}.kpi.gold .v{color:var(--goldl)}
+.tag{padding:3px 9px;border-radius:11px;font-size:11px;font-weight:600;cursor:pointer}
+.tag.paid{background:#e7f5e9;color:var(--ok)}.tag.pend{background:#fdf1e2;color:var(--warn)}
+.bulkbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+input[type=checkbox]{width:17px;height:17px;accent-color:var(--gold)}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+@media(max-width:640px){.g3,.g2{grid-template-columns:1fr 1fr}.result .big{font-size:34px}.kpis{grid-template-columns:1fr 1fr}}
+.cloudbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#0e1a2e;padding:10px 14px}
+.cloudbar input#cloudUrl{flex:1;min-width:180px;padding:9px 10px;border:1px solid #34527d;border-radius:8px;background:#16294a;color:#eaf1f8;font-family:'Jost';font-size:13px}
+.cloudbar .btn{padding:8px 12px;font-size:12.5px}
+.cloudbar .btn.ghost{background:transparent;border:1px solid #34527d;color:#cdd7e4}
+</style>
+</head>
+<body>
+<div class="top"><span class="b">ANMAR</span> &nbsp;<span class="t">COSTING &amp; SALES</span></div>
+<div class="maintabs">
+  <div class="mtab on" id="mt-cost" onclick="mtab('cost')">Costing</div>
+  <div class="mtab" id="mt-sales" onclick="mtab('sales')">Sales</div>
+</div>
+
+<div class="cloudbar">
+  <input id="cloudUrl" placeholder="Paste your Google Sheet Web-App URL to sync to cloud">
+  <button class="btn g" onclick="connectCloud()">Connect</button>
+  <button class="btn ghost" onclick="loadRemote(true)">Sync now</button>
+  <button class="btn ghost" onclick="backup()">Backup</button>
+  <button class="btn ghost" onclick="document.getElementById('impFile').click()">Restore</button>
+  <input id="impFile" type="file" accept="application/json" style="display:none" onchange="restore(event)">
+  <span id="cloudStatus" style="font-size:12px;color:#c9d6e4;margin-left:auto">not connected — using this device</span>
+</div>
+
+<!-- ============ COSTING ============ -->
+<div class="view on" id="view-cost"><div class="wrap">
+  <div class="card">
+    <h2>Shared costs</h2>
+    <div class="cs">Set once — used for every fragrance. (Rs)</div>
+    <div style="font-size:12px;color:var(--mid);margin-bottom:6px;font-weight:600">Bottle cost (empty bottle + cap)</div>
+    <div class="grid g3">
+      <div class="fld"><label>3 ML BOTTLE</label><input id="b3" type="number" inputmode="decimal"></div>
+      <div class="fld"><label>6 ML BOTTLE</label><input id="b6" type="number" inputmode="decimal"></div>
+      <div class="fld"><label>12 ML BOTTLE</label><input id="b12" type="number" inputmode="decimal"></div>
+    </div>
+    <div style="font-size:12px;color:var(--mid);margin:14px 0 6px;font-weight:600">Packing cost (box + bag, per pack)</div>
+    <div class="grid g2">
+      <div class="fld"><label>PREMIUM PACKING</label><input id="pkPrem" type="number" inputmode="decimal"></div>
+      <div class="fld"><label>REGULAR PACKING</label><input id="pkReg" type="number" inputmode="decimal"></div>
+    </div>
+    <div style="font-size:12px;color:var(--mid);margin:14px 0 6px;font-weight:600">Delivery cost (per online order)</div>
+    <div class="grid g2">
+      <div class="fld"><label>DELIVERY Rs</label><input id="deliv" type="number" inputmode="decimal"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Fragrances &amp; oil rate</h2>
+    <div class="cs">Enter cost per 100 ml — per-ml is calculated automatically.</div>
+    <div class="seg">
+      <button id="tabA" class="on" onclick="setTab('attar')">Attars</button>
+      <button id="tabP" onclick="setTab('perfume')">Perfumes</button>
+    </div>
+    <div class="scroll"><table>
+      <thead><tr><th>Fragrance</th><th>Cost / 100 ml</th><th>Per ml</th><th></th></tr></thead>
+      <tbody id="fragTb"></tbody></table></div>
+    <div class="addrow">
+      <input id="newName" placeholder="New fragrance name">
+      <input id="newCost" type="number" inputmode="decimal" placeholder="Cost / 100 ml" style="max-width:160px">
+      <button class="btn g" onclick="addFrag()">+ Add</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Costing</h2>
+    <div class="cs">Pick fragrance, pack &amp; margin — selling price is calculated. Offline mode removes delivery.</div>
+    <div class="grid g2" style="grid-template-columns:2fr 1fr 1fr 1fr">
+      <div class="fld"><label>FRAGRANCE</label><select id="selFrag"></select></div>
+      <div class="fld"><label>SIZE</label><select id="selSize"><option value="3">3 ml</option><option value="6" selected>6 ml</option><option value="12">12 ml</option></select></div>
+      <div class="fld"><label>PACK</label><select id="selPack"><option value="1">Single</option><option value="2">Pack of 2</option><option value="3">Pack of 3</option></select></div>
+      <div class="fld"><label>PACKING</label><select id="selPk"><option value="prem">Premium</option><option value="reg">Regular</option></select></div>
+    </div>
+    <div class="grid g2" style="grid-template-columns:1fr 1fr 1fr;margin-top:12px">
+      <div class="fld"><label>MODE</label><select id="selMode"><option value="online">Online (with delivery)</option><option value="offline">Offline (no delivery)</option></select></div>
+      <div class="fld"><label>MARGIN %</label><input id="selMargin" type="number" inputmode="decimal"></div>
+      <div class="fld"><label>MARGIN BASIS</label><select id="selBasis"><option value="cost">Markup on cost</option><option value="price">Margin on selling price</option></select></div>
+    </div>
+    <div id="result"></div>
+  </div>
+  <div class="card">
+    <h2>Full cost matrix</h2>
+    <div class="cs" id="matName">All packs for the selected fragrance.</div>
+    <div class="scroll"><table class="matrix">
+      <thead><tr><th>Size · Pack</th><th>Oil</th><th>Bottles</th><th>Packing</th><th>Delivery</th><th>Total cost</th><th>Per bottle</th><th>Sell price</th><th>Sell/bottle</th></tr></thead>
+      <tbody id="matTb"></tbody></table></div>
+    <div class="hint">Total = (oil + bottle) x bottles + packing + delivery(online only). Sell price uses your margin %.</div>
+  </div>
+</div></div>
+
+<!-- ============ SALES ============ -->
+<div class="view" id="view-sales"><div class="wrap">
+  <div class="kpis" id="salesKpis"></div>
+  <div class="card">
+    <h2>Record a sale</h2>
+    <div class="cs">Amount auto-fills from selling price — edit if needed. Cost &amp; net profit are calculated.</div>
+    <div class="grid g2" style="grid-template-columns:1.6fr 1fr 1fr">
+      <div class="fld"><label>DATE</label><input id="saDate" type="date"></div>
+      <div class="fld"><label>CUSTOMER (optional)</label><input id="saCust" placeholder="name / phone"></div>
+      <div class="fld"><label>MODE</label><select id="saMode" onchange="syncSaleAmt()"><option value="online">Online</option><option value="offline">Offline</option></select></div>
+    </div>
+    <div class="grid g2" style="grid-template-columns:2fr 1fr 1fr 1fr;margin-top:10px">
+      <div class="fld"><label>FRAGRANCE</label><select id="saFrag" onchange="syncSaleAmt()"></select></div>
+      <div class="fld"><label>SIZE</label><select id="saSize" onchange="syncSaleAmt()"><option value="3">3 ml</option><option value="6" selected>6 ml</option><option value="12">12 ml</option></select></div>
+      <div class="fld"><label>PACK</label><select id="saPack" onchange="syncSaleAmt()"><option value="1">Single</option><option value="2">Pack of 2</option><option value="3">Pack of 3</option></select></div>
+      <div class="fld"><label>PACKING</label><select id="saPk" onchange="syncSaleAmt()"><option value="prem">Premium</option><option value="reg">Regular</option></select></div>
+    </div>
+    <div class="grid g2" style="grid-template-columns:1fr 1fr auto;margin-top:10px;align-items:end">
+      <div class="fld"><label>AMOUNT RECEIVED Rs</label><input id="saAmt" type="number" inputmode="decimal"></div>
+      <div class="fld"><label>RECEIVED?</label><select id="saRecv"><option value="yes">Received</option><option value="no">Pending</option></select></div>
+      <button class="btn g" onclick="addSale()">+ Record sale</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Sales log</h2>
+    <div class="cs" id="salesSummary"></div>
+    <div class="bulkbar">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px"><input type="checkbox" id="chkAll" onchange="selAll(this.checked)"> Select all</label>
+      <button class="btn ghost sm" onclick="bulk('recv')">Mark Received</button>
+      <button class="btn ghost sm" onclick="bulk('pend')">Mark Pending</button>
+      <button class="btn ghost sm" onclick="bulk('del')" style="color:var(--bad)">Delete selected</button>
+      <button class="btn ghost sm" onclick="exportCSV()" style="margin-left:auto">⭳ Export CSV</button>
+    </div>
+    <div class="scroll"><table>
+      <thead><tr><th></th><th>Date</th><th>Attar / Perfume</th><th>ml sold</th><th>Amount</th><th>Received</th><th>Cost</th><th>Net profit</th><th></th></tr></thead>
+      <tbody id="salesTb"></tbody></table></div>
+  </div>
+</div></div>
+
+<script>
+const KEY="anmar_costing_v2";
+const SEED_ATTARS=["Musk Maria","Hawas Special","Attraction","Misk Rijali","Ashrafi Oud","Laviza for Women","White Oud","Noor-e-Mehek","Pasha the Royalty","Turkish Oud","Signature Blue"];
+let db={
+  attar:SEED_ATTARS.map((n,i)=>({id:"a"+i,name:n,c100:800})),
+  perfume:[], bottle:{3:8,6:10,12:14}, packing:{prem:25,reg:10}, deliv:40,
+  margin:100, basis:"cost", mode:"online", tab:"attar",
+  sel:{frag:"a1",size:"6",pack:"1",pk:"prem"}, sales:[]
+};
+try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.attar)db=Object.assign(db,d);}catch(e){}
+if(!db.sales)db.sales=[]; if(!db.margin)db.margin=100; if(!db.basis)db.basis="cost"; if(!db.mode)db.mode="online";
+const CKEY="anmar_cloud"; let CLOUD={url:""};
+try{const c=JSON.parse(localStorage.getItem(CKEY));if(c&&c.url)CLOUD.url=c.url;}catch(e){}
+function saveCloudCfg(){try{localStorage.setItem(CKEY,JSON.stringify({url:CLOUD.url}));}catch(e){}}
+function setStatus(t,ok){const el=document.getElementById("cloudStatus");if(el){el.textContent=t;el.style.color=ok?"#8fe0a0":"#f2a8a8";}}
+function connectCloud(){CLOUD.url=document.getElementById("cloudUrl").value.trim();saveCloudCfg();if(CLOUD.url){loadRemote(true);}else setStatus("not connected — using this device",false);}
+function refreshAll(){document.getElementById("b3").value=db.bottle[3];document.getElementById("b6").value=db.bottle[6];document.getElementById("b12").value=db.bottle[12];document.getElementById("pkPrem").value=db.packing.prem;document.getElementById("pkReg").value=db.packing.reg;document.getElementById("deliv").value=db.deliv;document.getElementById("selMargin").value=db.margin;document.getElementById("selBasis").value=db.basis;document.getElementById("selMode").value=db.mode;setTab(db.tab);renderSel();fillSaleSel();render();renderSales();}
+function applyRemote(data){if(data&&data.attar){db=Object.assign(db,data);if(!db.sales)db.sales=[];try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}refreshAll();setStatus("connected ✓ loaded from cloud",true);}else{setStatus("connected ✓ - saving your data to the sheet",true);pushRemote();}}
+function loadRemote(){if(!CLOUD.url){setStatus("paste your Sheet URL first",false);return;}setStatus("syncing...",true);fetch(CLOUD.url+(CLOUD.url.indexOf("?")>-1?"&":"?")+"t="+Date.now(),{redirect:"follow"}).then(function(r){return r.text();}).then(function(txt){var data={};try{data=JSON.parse(txt);}catch(e){var m=txt&&txt.match(/\{[\s\S]*\}/);if(m){try{data=JSON.parse(m[0]);}catch(e2){}}}applyRemote(data);}).catch(function(){jsonpLoad();});}
+function jsonpLoad(){const cb="__anmarCb"+Date.now();let done=false;const sc=document.createElement("script");function cleanup(){try{delete window[cb];}catch(e){}if(sc&&sc.parentNode)sc.remove();}const to=setTimeout(function(){if(!done){setStatus("cannot reach sheet - in Deploy set access to Anyone, then redeploy New version",false);cleanup();}},12000);window[cb]=function(data){done=true;clearTimeout(to);applyRemote(data);cleanup();};sc.onerror=function(){};sc.src=CLOUD.url+(CLOUD.url.indexOf("?")>-1?"&":"?")+"callback="+cb+"&t="+Date.now();document.body.appendChild(sc);}
+let __pushT=null;function schedulePush(){if(!CLOUD.url)return;clearTimeout(__pushT);__pushT=setTimeout(pushRemote,900);}
+function pushRemote(){if(!CLOUD.url)return;setStatus("saving…",true);fetch(CLOUD.url,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(db)}).then(function(){setStatus("saved to cloud ✓",true);}).catch(function(){setStatus("save failed (offline?)",false);});}
+function backup(){const b=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="anmar-costing-"+new Date().toISOString().slice(0,10)+".json";a.click();}
+function restore(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(){try{const d=JSON.parse(r.result);if(d.attar){db=Object.assign(db,d);if(!db.sales)db.sales=[];try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}refreshAll();schedulePush();alert("Restored ✓");}}catch(e){alert("Invalid file");}};r.readAsText(f);}
+function num(id){return parseFloat(document.getElementById(id).value)||0;}
+function val(id){const e=document.getElementById(id);return e?e.value:'';}
+const money=n=>"Rs "+(Math.round(n*100)/100).toLocaleString('en-IN');
+function save(){
+  db.bottle={3:num('b3'),6:num('b6'),12:num('b12')};
+  db.packing={prem:num('pkPrem'),reg:num('pkReg')}; db.deliv=num('deliv');
+  db.margin=num('selMargin'); db.basis=val('selBasis'); db.mode=val('selMode');
+  db.sel={frag:val('selFrag'),size:val('selSize'),pack:val('selPack'),pk:val('selPk')};
+  try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}
+  if(typeof CLOUD!=='undefined'&&CLOUD.url)schedulePush();
+}
+function allFrags(){return [...db.attar.map(f=>({...f,cat:'Attar'})),...db.perfume.map(f=>({...f,cat:'Perfume'}))];}
+function findFrag(id){return allFrags().find(f=>f.id===id);}
+
+/* ---------- costing ---------- */
+function costOf(frag,size,qty,pkType,mode){
+  const oilMl=frag.c100/100; const oil=oilMl*size*qty; const bottle=(db.bottle[size]||0)*qty;
+  const packing=pkType==='prem'?db.packing.prem:db.packing.reg;
+  const deliv=(mode==='offline')?0:db.deliv;
+  const total=oil+bottle+packing+deliv;
+  return {oilMl,oil,bottle,packing,deliv,total,per:total/qty,qty};
+}
+function sellOf(cost){
+  const m=db.margin||0; let sp;
+  if(db.basis==='price'){ sp=m>=99?cost*5:cost/(1-m/100); } else { sp=cost*(1+m/100); }
+  sp=Math.round(sp); return {sp,profit:sp-cost};
+}
+function setTab(t){db.tab=t;renderTable();document.getElementById('tabA').classList.toggle('on',t==='attar');document.getElementById('tabP').classList.toggle('on',t==='perfume');}
+function renderTable(){
+  const list=db[db.tab];
+  document.getElementById('fragTb').innerHTML=list.length?list.map(f=>`
+    <tr><td><b>${f.name}</b></td>
+    <td><input type="number" inputmode="decimal" data-cid="${f.id}" value="${f.c100}"></td>
+    <td class="pill" id="pm-${f.id}">${money(f.c100/100)}</td>
+    <td><button class="rm" onclick="delFrag('${f.id}')">delete</button></td></tr>`).join('')
+    :`<tr><td colspan="4" style="color:#999">No ${db.tab==='attar'?'attars':'perfumes'} yet — add one below.</td></tr>`;
+}
+function addFrag(){const n=document.getElementById('newName').value.trim();const c=parseFloat(document.getElementById('newCost').value)||0;if(!n)return;
+  db[db.tab].push({id:"f"+Date.now(),name:n,c100:c});document.getElementById('newName').value='';document.getElementById('newCost').value='';save();renderTable();renderSel();fillSaleSel();render();}
+function delFrag(id){if(!confirm('Delete this fragrance?'))return;db.attar=db.attar.filter(x=>x.id!==id);db.perfume=db.perfume.filter(x=>x.id!==id);save();renderTable();renderSel();fillSaleSel();render();}
+function renderSel(){
+  const sel=document.getElementById('selFrag');const cur=sel.value||db.sel.frag;
+  const grp=(l,a)=>a.length?`<optgroup label="${l}">`+a.map(f=>`<option value="${f.id}">${f.name}</option>`).join('')+`</optgroup>`:'';
+  sel.innerHTML=grp('Attars',db.attar)+grp('Perfumes',db.perfume);
+  if(findFrag(cur))sel.value=cur; else if(db.attar[0])sel.value=db.attar[0].id;
+}
+function render(){
+  renderSel();
+  const frag=findFrag(val('selFrag'))||db.attar[0]; if(!frag){document.getElementById('result').innerHTML='';document.getElementById('matTb').innerHTML='';return;}
+  const size=+val('selSize'),qty=+val('selPack'),pk=val('selPk'),mode=val('selMode');
+  const c=costOf(frag,size,qty,pk,mode); const s=sellOf(c.total);
+  const packName=pk==='prem'?'Premium':'Regular';
+  document.getElementById('result').innerHTML=`<div class="result">
+    <div class="top2"><div class="ttl">${frag.name} — ${size} ml ${qty>1?'x '+qty:'(single)'} · ${mode==='offline'?'Offline':'Online'}</div>
+      <div style="text-align:right"><div class="big">${money(s.sp)}</div><div class="per">selling price${qty>1?' · '+money(s.sp/qty)+'/bottle':''}</div></div></div>
+    <div class="bd">
+      <div class="r"><span>Fragrance oil (${money(c.oilMl)}/ml x ${size} x ${qty})</span><span>${money(c.oil)}</span></div>
+      <div class="r"><span>Bottle + cap (${money(db.bottle[size]||0)} x ${qty})</span><span>${money(c.bottle)}</span></div>
+      <div class="r"><span>Packing — ${packName}</span><span>${money(c.packing)}</span></div>
+      <div class="r"><span>Delivery${mode==='offline'?' (offline — excluded)':''}</span><span>${money(c.deliv)}</span></div>
+      <div class="r" style="border-top:1px solid rgba(255,255,255,.25);margin-top:6px;padding-top:8px"><span>Total cost</span><span>${money(c.total)}</span></div>
+      <div class="r"><span>Margin ${db.margin}% (${db.basis==='price'?'on price':'markup'})</span><span>Profit ${money(s.profit)}</span></div>
+    </div></div>`;
+  const combos=[[3,1],[6,1],[12,1],[6,2],[6,3],[3,2],[3,3]];
+  document.getElementById('matName').textContent=`${frag.name} · ${packName} packing · ${mode==='offline'?'Offline':'Online'}`;
+  document.getElementById('matTb').innerHTML=combos.map(([s2,q])=>{
+    const m=costOf(frag,s2,q,pk,mode); const sv=sellOf(m.total); const hl=(s2===size&&q===qty)?'hl':'';
+    return `<tr><td class="${hl}">${s2} ml · ${q===1?'Single':'Pack of '+q}</td>
+      <td class="${hl}">${money(m.oil)}</td><td class="${hl}">${money(m.bottle)}</td><td class="${hl}">${money(m.packing)}</td>
+      <td class="${hl}">${money(m.deliv)}</td><td class="pill ${hl}">${money(m.total)}</td><td class="${hl}">${money(m.per)}</td>
+      <td class="${hl}" style="color:var(--gold);font-weight:600">${money(sv.sp)}</td><td class="${hl}">${money(sv.sp/q)}</td></tr>`;
+  }).join('');
+}
+
+/* ---------- sales ---------- */
+function mtab(v){document.getElementById('mt-cost').classList.toggle('on',v==='cost');document.getElementById('mt-sales').classList.toggle('on',v==='sales');
+  document.getElementById('view-cost').classList.toggle('on',v==='cost');document.getElementById('view-sales').classList.toggle('on',v==='sales');
+  if(v==='sales'){fillSaleSel();syncSaleAmt();renderSales();}}
+function fillSaleSel(){
+  const sel=document.getElementById('saFrag');const cur=sel.value;
+  const grp=(l,a)=>a.length?`<optgroup label="${l}">`+a.map(f=>`<option value="${f.id}">${f.name}</option>`).join('')+`</optgroup>`:'';
+  sel.innerHTML=grp('Attars',db.attar)+grp('Perfumes',db.perfume);
+  if(findFrag(cur))sel.value=cur;
+  if(!document.getElementById('saDate').value)document.getElementById('saDate').value=new Date().toISOString().slice(0,10);
+}
+function saleCost(){
+  const frag=findFrag(val('saFrag'))||db.attar[0]; if(!frag)return{cost:0,sp:0,frag:null,size:6,qty:1};
+  const size=+val('saSize'),qty=+val('saPack'),pk=val('saPk'),mode=val('saMode');
+  const c=costOf(frag,size,qty,pk,mode); const s=sellOf(c.total);
+  return {cost:c.total,sp:s.sp,frag,size,qty,pk,mode};
+}
+function syncSaleAmt(){const x=saleCost();document.getElementById('saAmt').value=x.sp;}
+function addSale(){
+  const x=saleCost(); if(!x.frag){alert('Add a fragrance first');return;}
+  const amt=parseFloat(document.getElementById('saAmt').value)||0;
+  db.sales.unshift({id:"s"+Date.now(),date:val('saDate'),cust:val('saCust'),fragName:x.frag.name,
+    size:x.size,qty:x.qty,pk:x.pk,mode:x.mode,ml:x.size*x.qty,amount:amt,cost:Math.round(x.cost*x.qty? x.cost:x.cost),
+    recv:val('saRecv')==='yes'});
+  // cost stored is for the pack (already total for qty in costOf). fix: costOf total already includes qty.
+  db.sales[0].cost=Math.round(x.cost);
+  document.getElementById('saCust').value='';
+  save();renderSales();
+}
+function renderSales(){
+  const s=db.sales;
+  let tot=0,recv=0,pend=0,cost=0,prof=0;
+  s.forEach(o=>{tot+=o.amount; cost+=o.cost; prof+=(o.amount-o.cost); o.recv?recv+=o.amount:pend+=o.amount;});
+  document.getElementById('salesKpis').innerHTML=`
+    <div class="kpi"><div class="l">Orders</div><div class="v">${s.length}</div></div>
+    <div class="kpi gold"><div class="l">Total sales</div><div class="v">${money(tot)}</div></div>
+    <div class="kpi"><div class="l">Received</div><div class="v" style="color:var(--ok)">${money(recv)}</div></div>
+    <div class="kpi"><div class="l">Pending</div><div class="v" style="color:var(--warn)">${money(pend)}</div></div>`;
+  document.getElementById('salesSummary').innerHTML=`Total cost <b>${money(cost)}</b> · Net profit <b style="color:var(--ok)">${money(prof)}</b>`;
+  document.getElementById('salesTb').innerHTML = s.length ? s.map(o=>{
+    const p=o.amount-o.cost;
+    return `<tr>
+      <td><input type="checkbox" class="rowchk" data-id="${o.id}"></td>
+      <td>${o.date||''}</td>
+      <td><b>${o.fragName}</b>${o.cust?'<div style="font-size:11px;color:#999">'+o.cust+'</div>':''}</td>
+      <td>${o.size} ml${o.qty>1?' x '+o.qty:''} <span style="color:#999">(${o.ml} ml)</span></td>
+      <td><input type="number" inputmode="decimal" value="${o.amount}" data-amt="${o.id}" style="width:80px"></td>
+      <td onclick="toggleRecv('${o.id}')">${o.recv?'<span class="tag paid">RECEIVED</span>':'<span class="tag pend">PENDING</span>'}</td>
+      <td>${money(o.cost)}</td>
+      <td class="pill" style="color:${p>=0?'var(--ok)':'var(--bad)'}">${money(p)}</td>
+      <td><button class="rm" onclick="delSale('${o.id}')">delete</button></td></tr>`;
+  }).join('') : `<tr><td colspan="9" style="color:#999">No sales yet — record one above.</td></tr>`;
+}
+function toggleRecv(id){const o=db.sales.find(x=>x.id===id);o.recv=!o.recv;save();renderSales();}
+function delSale(id){if(!confirm('Delete this sale?'))return;db.sales=db.sales.filter(x=>x.id!==id);save();renderSales();}
+function selAll(c){document.querySelectorAll('.rowchk').forEach(x=>x.checked=c);}
+function bulk(action){
+  const ids=[...document.querySelectorAll('.rowchk:checked')].map(x=>x.dataset.id);
+  if(!ids.length){alert('Select some rows first');return;}
+  if(action==='del'){if(!confirm('Delete '+ids.length+' sales?'))return;db.sales=db.sales.filter(o=>!ids.includes(o.id));}
+  else db.sales.forEach(o=>{if(ids.includes(o.id))o.recv=(action==='recv');});
+  document.getElementById('chkAll').checked=false; save();renderSales();
+}
+function exportCSV(){
+  let rows=[["Date","Fragrance","Customer","ml sold","Mode","Amount","Received","Cost","Net profit"]];
+  db.sales.forEach(o=>rows.push([o.date,o.fragName,o.cust||'',o.ml,o.mode,o.amount,o.recv?'Yes':'No',o.cost,o.amount-o.cost]));
+  const csv=rows.map(r=>r.map(x=>`"${(''+x).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download="anmar-sales.csv";a.click();
+}
+
+/* ---------- init + live binding ---------- */
+document.getElementById('b3').value=db.bottle[3];document.getElementById('b6').value=db.bottle[6];document.getElementById('b12').value=db.bottle[12];
+document.getElementById('pkPrem').value=db.packing.prem;document.getElementById('pkReg').value=db.packing.reg;document.getElementById('deliv').value=db.deliv;
+document.getElementById('selMargin').value=db.margin;document.getElementById('selBasis').value=db.basis;document.getElementById('selMode').value=db.mode;
+setTab(db.tab);renderSel();
+if(db.sel){document.getElementById('selFrag').value=db.sel.frag;document.getElementById('selSize').value=db.sel.size;document.getElementById('selPack').value=db.sel.pack;document.getElementById('selPk').value=db.sel.pk;}
+render();
+// live recompute for costing view; c100 cell updates in place
+document.getElementById('view-cost').addEventListener('input',function(e){
+  const t=e.target;
+  if(t.dataset&&t.dataset.cid){const src=db.attar.find(x=>x.id===t.dataset.cid)||db.perfume.find(x=>x.id===t.dataset.cid);
+    if(src){src.c100=parseFloat(t.value)||0;const pm=document.getElementById('pm-'+t.dataset.cid);if(pm)pm.textContent=money(src.c100/100);}
+    const sf=document.getElementById('selFrag');if(sf&&findFrag(t.dataset.cid))sf.value=t.dataset.cid;}
+  save();render();
+});
+document.getElementById('view-cost').addEventListener('change',function(){save();render();});
+// sales: editable amount -> recompute profit
+document.getElementById('view-sales').addEventListener('input',function(e){
+  const t=e.target; if(t.dataset&&t.dataset.amt){const o=db.sales.find(x=>x.id===t.dataset.amt);if(o){o.amount=parseFloat(t.value)||0;save();renderSales();}}
+});
+document.getElementById('cloudUrl').value=CLOUD.url;
+if(CLOUD.url){loadRemote(true);}
+</script>
+</body>
+</html>
